@@ -1,14 +1,5 @@
 package com.alain.cursos.top;
 
-/* *
- * Project: MD Top from com.alain.cursos.top
- * Created by Alain Nicolás Tello on 10/11/2019 at 06:21 PM
- * All rights reserved 2020.
- * Course Material Design and Theming Professional for Android
- * More info: https://www.udemy.com/course/material-design-theming-diseno-profesional-para-android/
- * Cursos Android ANT
- */
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,6 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 
+import com.alain.cursos.top.databinding.ActivityDetalleBinding;
+import com.alain.cursos.top.databinding.ActivityMainBinding;
+import com.alain.cursos.top.databinding.ContentDetalleBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -44,48 +38,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class DetalleActivity extends AppCompatActivity {
 
-    private static final int RC_PHOTO_PICKER = 21;
+    ActivityMainBinding mainBinding;
+    ActivityDetalleBinding detalleBinding;
+    ContentDetalleBinding contentBinding;
 
-    @BindView(R.id.imgFoto)
-    AppCompatImageView imgFoto;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.toolbar_layout)
-    CollapsingToolbarLayout toolbarLayout;
-    @BindView(R.id.app_bar)
-    AppBarLayout appBar;
-    @BindView(R.id.etNombre)
-    TextInputEditText etNombre;
-    @BindView(R.id.etApellidos)
-    TextInputEditText etApellidos;
-    @BindView(R.id.etFechaNacimiento)
-    TextInputEditText etFechaNacimiento;
-    @BindView(R.id.etEdad)
-    TextInputEditText etEdad;
-    @BindView(R.id.etEstatura)
-    TextInputEditText etEstatura;
-    @BindView(R.id.etOrden)
-    TextInputEditText etOrden;
-    @BindView(R.id.etLugarNacimiento)
-    TextInputEditText etLugarNacimiento;
-    @BindView(R.id.etNotas)
-    TextInputEditText etNotas;
-    @BindView(R.id.containerMain)
-    NestedScrollView containerMain;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
-    @BindView(R.id.tilNombre)
-    TextInputLayout tilNombre;
-    @BindView(R.id.tilApellidos)
-    TextInputLayout tilApellidos;
-    @BindView(R.id.tilEstatura)
-    TextInputLayout tilEstatura;
+    private static final int RC_PHOTO_PICKER = 21;
 
     private Artista mArtista;
     private MenuItem mMenuItem;
@@ -94,8 +53,17 @@ public class DetalleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detalle);
-        ButterKnife.bind(this);
+
+        detalleBinding = ActivityDetalleBinding.inflate(getLayoutInflater());
+        mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        contentBinding = ContentDetalleBinding.inflate(getLayoutInflater());
+        setContentView(detalleBinding.getRoot());
+
+        detalleBinding.fab.setOnClickListener(view -> saveOrEdit());
+
+        contentBinding.etFechaNacimiento.setOnClickListener(view -> onSetFecha());
+
+        detalleBinding.imgFromUrl.setOnClickListener(this::photoHandler);
 
         configArtista(getIntent());
         configActionBar();
@@ -105,15 +73,15 @@ public class DetalleActivity extends AppCompatActivity {
     private void configArtista(Intent intent) {
         getArtist(intent.getLongExtra(Artista.ID, 0));
 
-        etNombre.setText(mArtista.getNombre());
-        etApellidos.setText(mArtista.getApellidos());
-        etFechaNacimiento.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
+        contentBinding.etNombre.setText(mArtista.getNombre());
+        contentBinding.etApellidos.setText(mArtista.getApellidos());
+        contentBinding.etFechaNacimiento.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
                 .format(mArtista.getFechaNacimiento()));
-        etEdad.setText(getEdad(mArtista.getFechaNacimiento()));
-        etEstatura.setText(String.valueOf(mArtista.getEstatura()));
-        etOrden.setText(String.valueOf(mArtista.getOrden()));
-        etLugarNacimiento.setText(mArtista.getLugarNacimiento());
-        etNotas.setText(mArtista.getNotas());
+        contentBinding.etEdad.setText(getEdad(mArtista.getFechaNacimiento()));
+        contentBinding.etEstatura.setText(String.valueOf(mArtista.getEstatura()));
+        contentBinding.etOrden.setText(String.valueOf(mArtista.getOrden()));
+        contentBinding.etLugarNacimiento.setText(mArtista.getLugarNacimiento());
+        contentBinding.etNotas.setText(mArtista.getNotas());
     }
 
     private void getArtist(long id) {
@@ -131,32 +99,21 @@ public class DetalleActivity extends AppCompatActivity {
     }
 
     private void configActionBar() {
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mainBinding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        toolbarLayout.setExpandedTitleColor(Color.WHITE);
-        appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-            /*
-            toolbarLayout.setTitle("appBarLayout = " + appBarLayout.getTotalScrollRange());
-            etNombre.setText("verticalOffset = " + verticalOffset);
+        detalleBinding.toolbarLayout.setExpandedTitleColor(Color.WHITE);
+        detalleBinding.appBar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 
-            if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()){
-                toolbar.getNavigationIcon().setTint(Color.BLACK);
-            } else {
-                toolbar.getNavigationIcon().setTint(Color.WHITE);
-            }*/
             if (AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES) {
                 float percentage = Math.abs((float) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange() - 1);
                 int colorValue = (int) (percentage * 255);
-                if (toolbar.getNavigationIcon() != null) {
-                    toolbar.getNavigationIcon().setTint(Color.rgb(colorValue, colorValue, colorValue));
+                if (mainBinding.toolbar.getNavigationIcon() != null) {
+                    mainBinding.toolbar.getNavigationIcon().setTint(Color.rgb(colorValue, colorValue, colorValue));
                 }
-                /*etApellidos.setText("verticalScoll/appBar = " + (float)Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange());
-                etLugarNacimiento.setText("Porcentaje = " + percentage);
-                etNotas.setText("ColorValue = " + colorValue);*/
             }
         });
 
@@ -164,7 +121,7 @@ public class DetalleActivity extends AppCompatActivity {
     }
 
     private void configTitle() {
-        toolbarLayout.setTitle(mArtista.getNombreCompleto());
+        detalleBinding.toolbarLayout.setTitle(mArtista.getNombreCompleto());
     }
 
     private void configImageView(String fotoUrl) {
@@ -176,9 +133,9 @@ public class DetalleActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(fotoUrl)
                     .apply(options)
-                    .into(imgFoto);
+                    .into(detalleBinding.imgFoto);
         } else {
-            imgFoto.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_photo_size_select_actual));
+            detalleBinding.imgFoto.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_photo_size_select_actual));
         }
 
         mArtista.setFotoUrl(fotoUrl);
@@ -227,17 +184,16 @@ public class DetalleActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.fab)
     public void saveOrEdit() {
         if (mIsEdit) {
-            if (validateFields() && etNombre.getText() != null && etApellidos.getText() != null &&
-                    etEstatura.getText() != null && etLugarNacimiento.getText() != null &&
-                    etNotas.getText() != null) {
-                mArtista.setNombre(etNombre.getText().toString().trim());
-                mArtista.setApellidos(etApellidos.getText().toString().trim());
-                mArtista.setEstatura(Short.valueOf(etEstatura.getText().toString().trim()));
-                mArtista.setLugarNacimiento(etLugarNacimiento.getText().toString().trim());
-                mArtista.setNotas(etNotas.getText().toString().trim());
+            if (validateFields() && contentBinding.etNombre.getText() != null && contentBinding.etApellidos.getText() != null &&
+                    contentBinding.etEstatura.getText() != null && contentBinding.etLugarNacimiento.getText() != null &&
+                    contentBinding.etNotas.getText() != null) {
+                mArtista.setNombre(contentBinding.etNombre.getText().toString().trim());
+                mArtista.setApellidos(contentBinding.etApellidos.getText().toString().trim());
+                mArtista.setEstatura(Short.valueOf(contentBinding.etEstatura.getText().toString().trim()));
+                mArtista.setLugarNacimiento(contentBinding.etLugarNacimiento.getText().toString().trim());
+                mArtista.setNotas(contentBinding.etNotas.getText().toString().trim());
 
                 try {
                     mArtista.update();
@@ -245,7 +201,7 @@ public class DetalleActivity extends AppCompatActivity {
                     showMessage(R.string.detalle_message_update_success);
                     Log.i("DBFlow", "Inserción correcta de datos.");
 
-                    fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_edit));
+                    detalleBinding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_edit));
                     enableUIElements(false);
                     mIsEdit = false;
                 } catch (Exception e) {
@@ -256,7 +212,7 @@ public class DetalleActivity extends AppCompatActivity {
             }
         } else {
             mIsEdit = true;
-            fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_check));
+            detalleBinding.fab.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_account_check));
             enableUIElements(true);
         }
     }
@@ -264,46 +220,45 @@ public class DetalleActivity extends AppCompatActivity {
     private boolean validateFields() {
         boolean isValid = true;
 
-        if (etEstatura.getText() != null && (etEstatura.getText().toString().trim().isEmpty() ||
-                Integer.valueOf(etEstatura.getText().toString().trim()) < getResources().getInteger(R.integer.estatura_min))) {
-            tilEstatura.setError(getString(R.string.addArtist_error_estaturaMin));
-            tilEstatura.requestFocus();
+        if (contentBinding.etEstatura.getText() != null && (contentBinding.etEstatura.getText().toString().trim().isEmpty() ||
+                Integer.valueOf(contentBinding.etEstatura.getText().toString().trim()) < getResources().getInteger(R.integer.estatura_min))) {
+            contentBinding.tilEstatura.setError(getString(R.string.addArtist_error_estaturaMin));
+            contentBinding.tilEstatura.requestFocus();
             isValid = false;
         } else {
-            tilEstatura.setError(null);
+            contentBinding.tilEstatura.setError(null);
         }
-        if (etApellidos.getText() != null && etApellidos.getText().toString().trim().isEmpty()) {
-            tilApellidos.setError(getString(R.string.addArtist_error_required));
-            tilApellidos.requestFocus();
+        if (contentBinding.etApellidos.getText() != null && contentBinding.etApellidos.getText().toString().trim().isEmpty()) {
+            contentBinding.tilApellidos.setError(getString(R.string.addArtist_error_required));
+            contentBinding.tilApellidos.requestFocus();
             isValid = false;
         } else {
-            tilApellidos.setError(null);
+            contentBinding.tilApellidos.setError(null);
         }
-        if (etNombre.getText() != null && etNombre.getText().toString().trim().isEmpty()) {
-            tilNombre.setError(getString(R.string.addArtist_error_required));
-            tilNombre.requestFocus();
+        if (contentBinding.etNombre.getText() != null && contentBinding.etNombre.getText().toString().trim().isEmpty()) {
+            contentBinding.tilNombre.setError(getString(R.string.addArtist_error_required));
+            contentBinding.tilNombre.requestFocus();
             isValid = false;
         } else {
-            tilNombre.setError(null);
+            contentBinding.tilNombre.setError(null);
         }
 
         return isValid;
     }
 
     private void enableUIElements(boolean enable) {
-        etNombre.setEnabled(enable);
-        etApellidos.setEnabled(enable);
-        etFechaNacimiento.setEnabled(enable);
-        etEstatura.setEnabled(enable);
-        etLugarNacimiento.setEnabled(enable);
-        etNotas.setEnabled(enable);
+        contentBinding.etNombre.setEnabled(enable);
+        contentBinding.etApellidos.setEnabled(enable);
+        contentBinding.etFechaNacimiento.setEnabled(enable);
+        contentBinding.etEstatura.setEnabled(enable);
+        contentBinding.etLugarNacimiento.setEnabled(enable);
+        contentBinding.etNotas.setEnabled(enable);
 
         mMenuItem.setVisible(enable);
-        appBar.setExpanded(!enable);
-        containerMain.setNestedScrollingEnabled(!enable);
+        detalleBinding.appBar.setExpanded(!enable);
+        mainBinding.containerMain.setNestedScrollingEnabled(!enable);
     }
 
-    @OnClick(R.id.etFechaNacimiento)
     public void onSetFecha() {
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setSelection(mArtista.getFechaNacimiento());
@@ -315,24 +270,21 @@ public class DetalleActivity extends AppCompatActivity {
 
         MaterialDatePicker<?> picker = builder.build();
         picker.addOnPositiveButtonClickListener(selection -> {
-            etFechaNacimiento.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
+            contentBinding.etFechaNacimiento.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
                     .format(selection));
             mArtista.setFechaNacimiento((Long) selection);
-            etEdad.setText(getEdad((Long) selection));
+            contentBinding.etEdad.setText(getEdad((Long) selection));
         });
         picker.show(getSupportFragmentManager(), picker.toString());
     }
 
-
     private void showMessage(int resource) {
-        Snackbar.make(containerMain, resource, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mainBinding.containerMain, resource, Snackbar.LENGTH_SHORT).show();
     }
 
-    @OnClick({R.id.imgDeleteFoto, R.id.imgFromGallery, R.id.imgFromUrl})
     public void photoHandler(View view) {
         switch (view.getId()) {
             case R.id.imgDeleteFoto:
-                //AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                         .setTitle(R.string.detalle_dialogDelete_title)
                         .setMessage(String.format(Locale.ROOT,

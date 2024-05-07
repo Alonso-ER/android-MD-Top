@@ -42,6 +42,10 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:${constraintVersion}"
     implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     implementation "com.google.android.material:material:${materialVersion}"
+    //noinspection GradleCompatible
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     implementation "com.github.Raizlabs.DBFlow:dbflow-core:${dbflowVersion}"
     implementation "com.github.Raizlabs.DBFlow:dbflow:${dbflowVersion}"
