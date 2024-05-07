@@ -15,8 +15,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alain.cursos.top.databinding.ActivityAddArtistBinding;
-import com.alain.cursos.top.databinding.ActivityDetalleBinding;
 import com.alain.cursos.top.databinding.ActivityMainBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -27,16 +25,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnItemClickListener {
-
     ActivityMainBinding mainBinding;
-
     private final String SP_DARK_THEME = "spDarkTheme";
-
     private SharedPreferences mSharedPreferences;
     private boolean mIsModeNight;
-
     private ArtistaAdapter adapter;
-
     RecyclerView recyclerView;
 
     @Override
@@ -73,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
+    //* Datos del Artista
     private void generateArtist() {
         String[] nombres = {"Rachel", "Mary Elizabeth", "Jessica", "Gal", "Anne", "Emma", "Sophie", "Rooney", "Michelle", "Margot"};
         String[] apellidos = {"McAdams", "Winstead", "Chastain", "Gadot", "Hathaway", "Stone", "Turner", "Mara", "Williams", "Robbie"};
