@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.alain.cursos.top.MainActivity">
+    <item
+        android:id="@+id/action_lightTheme"
+        android:orderInCategory="100"
+        android:title="@string/action_lightTheme"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_darkTheme"
+        android:orderInCategory="200"
+        android:title="@string/action_darkTheme"
+        app:showAsAction="never" />
+</menu>
